@@ -27,7 +27,7 @@ const Users = mongoose.model(
   })
 );
 
-app.get("/api/someValue/", async (req, res) => {
+app.get("/api/users/", async (req, res) => {
   res.send(await Users.find());
 });
 

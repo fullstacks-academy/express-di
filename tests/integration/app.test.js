@@ -3,13 +3,16 @@ const request = require("supertest");
 let server;
 
 describe("/api/someValue", () => {
-    beforeEach(() => server = require("../../app.js"));
-    afterEach(() => server.close());
+  // eslint-disable-next-line node/global-require
+  beforeEach(() => (server = require("../../app")));
 
-    describe("GET /", () => {
-        it("should return an empty array for now", async () => {
-            const res = await request(server).get("/api/someValue");
-            expect(res.status).toBe(200);
-        });
+  afterEach(() => server.close());
+
+  describe("GET /", () => {
+    it("should return an empty array for now", async () => {
+      const res = await request(server).get("/api/users");
+
+      expect(res.status).toBe(200);
     });
+  });
 });
