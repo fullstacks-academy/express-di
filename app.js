@@ -1,46 +1,22 @@
-require("dotenv").config();
-const config = require("config");
-const mongoose = require("mongoose");
-
-const log = console.log;
 const express = require("express");
+const Users = require("./User");
 
-const app = express();
+function createApp(port) {
+  const app = express();
 
-process.on("uncaughtException", () => {
-  log("An unhandeled error accrued");
-  process.exit(1);
-});
-process.on("unhandledRejection", () => {
-  log("an unhandeled promise rejection accrued");
-  process.exit(1);
-});
+  app.get("/api/users/", async (req, res) => {
+    res.send(await Users.find());
+  });
 
-connectMongoDb(config.get("db"));
-
-const Users = mongoose.model(
-  "users",
-  new mongoose.Schema({
-    name: String,
-    email: String,
-    password: String,
-  })
-);
-
-app.get("/api/users/", async (req, res) => {
-  res.send(await Users.find());
-});
-
-const PORT = process.env.PORT || 3000;
-const server = app.listen(PORT, () => log(`listening on port ${PORT}`));
-
-module.exports = server;
-
-async function connectMongoDb(DB) {
-  try {
-    await mongoose.connect(DB);
-    log(`Connected to ${DB}`);
-  } catch (error) {
-    log(error);
+  function listen() {
+    return new Promise((resolve) => {
+      app.listen(port, () => {
+        resolve(app);
+      });
+    });
   }
+
+  return { listen };
 }
+
+module.exports = createApp;
