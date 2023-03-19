@@ -1,22 +1,15 @@
 const express = require("express");
-const Users = require("./User");
+const { UserController } = require("./UserController");
+const { MongooseUserRepo } = require("./UserRepo");
 
-function createApp(port) {
+function createApp() {
   const app = express();
+  const repo = new MongooseUserRepo();
+  const userController = new UserController(repo);
 
-  app.get("/api/users/", async (req, res) => {
-    res.send(await Users.find());
-  });
+  app.get("/api/users/", userController.getUsers);
 
-  function listen() {
-    return new Promise((resolve) => {
-      app.listen(port, () => {
-        resolve(app);
-      });
-    });
-  }
-
-  return { listen };
+  return app;
 }
 
 module.exports = createApp;

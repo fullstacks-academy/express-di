@@ -1,12 +1,18 @@
-const mongoose = require("mongoose");
+class User {
+  constructor({ name, lastname, repo }) {
+    this.repo = repo;
+    this.name = name;
+    this.lastname = lastname;
+  }
 
-const Users = mongoose.model(
-  "users",
-  new mongoose.Schema({
-    name: String,
-    email: String,
-    password: String,
-  })
-);
+  hasLongEnoughName() {
+    return this.name.length >= 5;
+  }
 
-module.exports = Users;
+  async hasUniqueName() {
+    const users = await this.repo.find(this.name, 5);
+    return users.length === 0;
+  }
+}
+
+module.exports.User = User;

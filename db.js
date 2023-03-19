@@ -1,13 +1,23 @@
-const log = require("./log");
 const mongoose = require("mongoose");
 
-async function connectMongoDb(DB) {
-  try {
-    await mongoose.connect(DB);
-    log(`Connected to ${DB}`);
-  } catch (error) {
-    log(error);
+class MongoService {
+  constructor(connectionURL) {
+    this.connectionURL = connectionURL;
+    this.connection = null;
+  }
+
+  connect = async () => {
+    this.connection = await mongoose.connect(this.connectionURL);
+    return this.connection;
+  };
+
+  disconnect() {
+    return this.connection?.disconnect();
+  }
+
+  dropDb() {
+    return mongoose.connection.db.dropDatabase();
   }
 }
 
-module.exports = connectMongoDb;
+module.exports = MongoService;
